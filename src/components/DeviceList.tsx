@@ -1,15 +1,31 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {Link, useNavigate, useSearchParams} from 'react-router-dom';
 import { useDeviceContext } from '../context/DeviceContext';
-import { Typography, Container, List, ListItem, ListItemText, Button, Box } from '@mui/material';
+import {Typography, Container, List, ListItem, ListItemText, Button, Box, Modal} from '@mui/material';
+import DeviceForm from "./DeviceForm";
 
-const DeviceList: React.FC = () => {
+ const DeviceList: React.FC = () => {
     const { devices, deleteDevice } = useDeviceContext();
+    const navigate = useNavigate()
+    let [searchParams, setSearchParams] = useSearchParams();
+    const [showDialog, setShowDialog] = useState(false)
+
+    useEffect(() => {
+            setShowDialog(!!searchParams.get("new") || !!searchParams.get('id'))
+    }, [searchParams]);
 
     const handleRemove = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
         e.preventDefault();
         deleteDevice(id);
     };
+
+    const handleAddDevice = () => {
+        navigate("?new=true");
+    }
+
+    const handleEditDevice = (id) => {
+        navigate(`?id=${id}`);
+    }
 
 
     return (
@@ -17,9 +33,12 @@ const DeviceList: React.FC = () => {
             <Typography variant="h4" style={{ marginBottom: '24px', color: '#2196F3' }}>
                 Device List
             </Typography>
+           <DeviceForm open={showDialog} />
             <Button
                 component={Link}
-                to="/new"
+                onClick={handleAddDevice}
+                to="/?new=true"
+                state={{ videoTitle: "title" }} // <-- state prop
                 variant="contained"
                 color="primary"
                 style={{ marginBottom: '24px', background: '#4CAF50', color: '#fff' }}
@@ -31,9 +50,6 @@ const DeviceList: React.FC = () => {
                 {devices.map((device) => (
                     <ListItem
                         key={device.id}
-                        button
-                        component={Link}
-                        to={`/device/${device.id}`}
                         style={{ borderBottom: '1px solid #ddd', borderRadius: '8px', marginBottom: '8px' }}
                     >
                         <ListItemText
@@ -42,6 +58,13 @@ const DeviceList: React.FC = () => {
                         <Button
                             variant="outlined"
                             color="secondary"
+                            onClick={()=> handleEditDevice(device.id)}
+                        >
+                            Edit
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            color="error"
                             onClick={(e) => handleRemove(e, device.id)}
                         >
                             Remove
@@ -60,4 +83,4 @@ const DeviceList: React.FC = () => {
     );
 };
 
-export default DeviceList;
+ export default DeviceList

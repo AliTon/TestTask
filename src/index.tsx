@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom';
 
 import { DeviceProvider } from './context/DeviceContext';
 import DeviceList from './components/DeviceList';
-import DeviceForm from './components/DeviceForm';
 
 import {
     createBrowserRouter,
@@ -15,14 +14,6 @@ const router = createBrowserRouter([
     {
         path: "/",
         element: <DeviceList/>
-    },
-    {
-        path: "/device/:id",
-        element: <DeviceForm/>
-    },
-    {
-        path: "/new",
-        element: <DeviceForm/>
     },
 ]);
 
