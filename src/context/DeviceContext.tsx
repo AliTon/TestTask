@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
+import React, {createContext, useContext, ReactNode, useState, useEffect} from 'react';
 
 interface Device {
     id: string;
@@ -28,7 +28,7 @@ interface DeviceProviderProps {
     children: ReactNode;
 }
 
-export const DeviceProvider: React.FC<DeviceProviderProps> = ({ children }) => {
+export const DeviceProvider: React.FC<DeviceProviderProps> = ({children}) => {
     const [devices, setDevices] = useState<Device[]>([]);
 
     const addDevice = (device: Device) => {

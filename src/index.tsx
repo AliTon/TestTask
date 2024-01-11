@@ -2,7 +2,7 @@ import React from 'react';
 
 import ReactDOM from 'react-dom';
 
-import { DeviceProvider } from './context/DeviceContext';
+import {DeviceProvider} from './context/DeviceContext';
 import DeviceList from './components/DeviceList';
 
 import {
@@ -20,7 +20,7 @@ const router = createBrowserRouter([
 const App: React.FC = () => {
     return (
         <DeviceProvider>
-            <RouterProvider router={router} />
+            <RouterProvider router={router}/>
         </DeviceProvider>
     );
 };
@@ -28,4 +28,4 @@ const App: React.FC = () => {
 export default App;
 
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<App/>, document.getElementById('root'));
