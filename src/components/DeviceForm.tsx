@@ -1,6 +1,7 @@
 import React from 'react';
-import {useParams, useNavigate} from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useDeviceContext } from '../context/DeviceContext';
+import { Button, TextField, Typography, Container, Grid } from '@mui/material';
 
 const DeviceForm: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -36,27 +37,45 @@ const DeviceForm: React.FC = () => {
     };
 
     return (
-        <div>
-            <h1>{device ? 'Edit Device' : 'Create Device'}</h1>
+        <Container>
+            <Typography variant="h4">{device ? 'Edit Device' : 'Create Device'}</Typography>
             <form onSubmit={handleSubmit}>
-                <label>
-                    Name:
-                    <input type="text" name="name" defaultValue={device?.name} required />
-                </label>
-                <br />
-                <label>
-                    Serial Number:
-                    <input type="text" name="serialNumber" defaultValue={device?.serialNumber} required />
-                </label>
-                <br />
-                <label>
-                    Data (comma-separated):
-                    <input type="text" name="data" defaultValue={device?.data.join(',')} />
-                </label>
-                <br />
-                <button type="submit">{device ? 'Save' : 'Create'}</button>
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <TextField
+                            fullWidth
+                            label="Name"
+                            type="text"
+                            name="name"
+                            defaultValue={device?.name}
+                            required
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField
+                            fullWidth
+                            label="Serial Number"
+                            type="text"
+                            name="serialNumber"
+                            defaultValue={device?.serialNumber}
+                            required
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField
+                            fullWidth
+                            label="Data (comma-separated)"
+                            type="text"
+                            name="data"
+                            defaultValue={device?.data.join(',')}
+                        />
+                    </Grid>
+                </Grid>
+                <Button type="submit" variant="contained" color="primary">
+                    {device ? 'Save' : 'Create'}
+                </Button>
             </form>
-        </div>
+        </Container>
     );
 };
 
