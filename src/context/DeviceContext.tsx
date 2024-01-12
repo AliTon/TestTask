@@ -1,4 +1,4 @@
-import React, {createContext, useContext, ReactNode, useState, useEffect} from 'react';
+import React, { createContext, useContext, ReactNode, useReducer, useEffect } from 'react';
 
 interface Device {
     id: string;
@@ -9,10 +9,13 @@ interface Device {
 
 interface DeviceContextProps {
     devices: Device[];
-    addDevice: (device: Device) => void;
-    editDevice: (id: string, device: Device) => void;
-    deleteDevice: (id: string) => void;
+    dispatch: React.Dispatch<DeviceAction>;
 }
+
+type DeviceAction =
+    | { type: 'ADD_DEVICE'; payload: Device }
+    | { type: 'EDIT_DEVICE'; payload: { id: string; device: Device } }
+    | { type: 'DELETE_DEVICE'; payload: string };
 
 const DeviceContext = createContext<DeviceContextProps | undefined>(undefined);
 
@@ -28,27 +31,29 @@ interface DeviceProviderProps {
     children: ReactNode;
 }
 
-export const DeviceProvider: React.FC<DeviceProviderProps> = ({children}) => {
-    const [devices, setDevices] = useState<Device[]>([]);
+const deviceReducer = (state: Device[], action: DeviceAction): Device[] => {
+    switch (action.type) {
+        case 'ADD_DEVICE':
+            return [...state, action.payload];
+        case 'EDIT_DEVICE':
+            return state.map((device) => (device.id === action.payload.id ? action.payload.device : device));
+        case 'DELETE_DEVICE':
+            return state.filter((device) => device.id !== action.payload);
+        default:
+            return state;
+    }
+};
 
-    const addDevice = (device: Device) => {
-        setDevices([...devices, device]);
-    };
-
-    const editDevice = (id: string, updatedDevice: Device) => {
-        setDevices(devices.map((device) => (device.id === id ? updatedDevice : device)));
-    };
-
-    const deleteDevice = (id: string) => {
-        setDevices(devices.filter((device) => device.id !== id));
-    };
-
-    useEffect(() => {
-        const storedDevices = localStorage.getItem('devices');
-        if (storedDevices) {
-            setDevices(JSON.parse(storedDevices));
+export const DeviceProvider: React.FC<DeviceProviderProps> = ({ children }) => {
+    const [devices, dispatch] = useReducer(deviceReducer, [], (initial) => {
+        try {
+            const storedDevices = localStorage.getItem('devices');
+            return storedDevices ? JSON.parse(storedDevices) : initial;
+        } catch (error) {
+            console.error('Error parsing stored devices:', error);
+            return initial;
         }
-    }, []);
+    });
 
     useEffect(() => {
         localStorage.setItem('devices', JSON.stringify(devices));
@@ -56,9 +61,7 @@ export const DeviceProvider: React.FC<DeviceProviderProps> = ({children}) => {
 
     const contextValue: DeviceContextProps = {
         devices,
-        addDevice,
-        editDevice,
-        deleteDevice,
+        dispatch,
     };
 
     return <DeviceContext.Provider value={contextValue}>{children}</DeviceContext.Provider>;

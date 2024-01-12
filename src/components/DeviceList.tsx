@@ -15,17 +15,18 @@ import {DeleteOutlined, Devices, Edit, Add} from '@mui/icons-material';
 
 
 const DeviceList: React.FC = () => {
-    const {devices, deleteDevice} = useDeviceContext();
+    const {devices, deleteDevice, dispatch} = useDeviceContext();
     const navigate = useNavigate()
     let [searchParams] = useSearchParams();
     const [showDialog, setShowDialog] = useState(false)
+
 
     useEffect(() => {
         setShowDialog(!!searchParams.get("new") || !!searchParams.get('id'))
     }, [searchParams]);
 
     const handleRemove = (id: string) => {
-        deleteDevice(id);
+        dispatch({type:"DELETE_DEVICE", payload: id})
     };
 
     const handleAddDevice = () => {
@@ -42,7 +43,6 @@ const DeviceList: React.FC = () => {
             <Typography variant="h4" style={{marginBottom: '24px', color: '#2196F3'}}>
                 Device List
             </Typography>
-            <DeviceForm open={showDialog}/>
             <Button
                 onClick={handleAddDevice}
                 variant="contained"
@@ -52,6 +52,7 @@ const DeviceList: React.FC = () => {
             >
                 Add New Device
             </Button>
+            <DeviceForm open={showDialog}/>
             <List>
                 {devices.map((device) => (
                     <ListItem

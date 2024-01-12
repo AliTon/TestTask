@@ -19,7 +19,7 @@ export default function DeviceForm({open}: { open: boolean }) {
     let [searchParams, setSearchParams] = useSearchParams();
     const id = searchParams.get("id")
 
-    const {devices, addDevice, editDevice} = useDeviceContext();
+    const {dispatch,devices, addDevice, editDevice} = useDeviceContext();
 
     const device = devices.find((d) => d.id === id);
 
@@ -31,10 +31,12 @@ export default function DeviceForm({open}: { open: boolean }) {
         const serialNumber = formJson.serialNumber;
         const data = formJson.data?.toString().split(',').map(Number) || [];
         if (device) {
-            editDevice(id, {id, name, serialNumber, data});
+            dispatch({type: "EDIT_DEVICE", payload: {id, device: {id, name, serialNumber, data}}})
         } else {
             const newDevice = {id: uuidv4(), name, serialNumber, data};
-            addDevice(newDevice);
+            dispatch({type: "ADD_DEVICE", payload: newDevice})
+
+            // addDevice(newDevice);
         }
         handleClose();
     };
