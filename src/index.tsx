@@ -2,7 +2,7 @@ import React from 'react';
 
 import ReactDOM from 'react-dom';
 
-import {DeviceProvider} from './context/DeviceContext';
+import {DeviceProvider} from './components/DeviceContext';
 import DeviceList from './components/DeviceList';
 
 import {

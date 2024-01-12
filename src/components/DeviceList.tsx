@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useNavigate, useSearchParams} from 'react-router-dom';
-import {useDeviceContext} from '../context/DeviceContext';
+import {useDeviceContext} from './DeviceContext';
 import {
     Typography,
     Container,
@@ -10,33 +10,31 @@ import {
     Button,
     Box
 } from '@mui/material';
-import DeviceForm from "./DeviceForm";
+import DeviceForm from './DeviceForm';
 import {DeleteOutlined, Devices, Edit, Add} from '@mui/icons-material';
-
+import {addDevice, editDevice, deleteDevice} from '../actions/deviceActions';
 
 const DeviceList: React.FC = () => {
-    const {devices, deleteDevice, dispatch} = useDeviceContext();
-    const navigate = useNavigate()
-    let [searchParams] = useSearchParams();
-    const [showDialog, setShowDialog] = useState(false)
-
+    const {devices, dispatch} = useDeviceContext();
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const [showDialog, setShowDialog] = useState(false);
 
     useEffect(() => {
-        setShowDialog(!!searchParams.get("new") || !!searchParams.get('id'))
+        setShowDialog(!!searchParams.get('new') || !!searchParams.get('id'));
     }, [searchParams]);
 
     const handleRemove = (id: string) => {
-        dispatch({type:"DELETE_DEVICE", payload: id})
+        dispatch(deleteDevice(id));
     };
 
     const handleAddDevice = () => {
-        navigate("?new=true");
-    }
+        navigate('?new=true');
+    };
 
-    const handleEditDevice = (id) => {
+    const handleEditDevice = (id: string) => {
         navigate(`?id=${id}`);
-    }
-
+    };
 
     return (
         <Container style={{padding: '32px', textAlign: 'center'}}>
@@ -64,7 +62,8 @@ const DeviceList: React.FC = () => {
                                 <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
                                     <Devices color="info"/>
                                     <Typography variant="subtitle1">{device.name}</Typography>
-                                </div>}
+                                </div>
+                            }
                         />
                         <Button
                             variant="outlined"
@@ -97,4 +96,4 @@ const DeviceList: React.FC = () => {
     );
 };
 
-export default DeviceList
+export default DeviceList;

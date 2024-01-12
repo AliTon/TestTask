@@ -1,6 +1,6 @@
 import React from 'react';
 import {useSearchParams} from 'react-router-dom';
-import {useDeviceContext} from '../context/DeviceContext';
+import {useDeviceContext} from './DeviceContext';
 import {
     Button,
     TextField,
@@ -12,15 +12,12 @@ import {
     DialogTitle,
 } from '@mui/material';
 import {v4 as uuidv4} from 'uuid';
-
+import {addDevice, editDevice} from '../actions/deviceActions';
 
 export default function DeviceForm({open}: { open: boolean }) {
-
     let [searchParams, setSearchParams] = useSearchParams();
-    const id = searchParams.get("id")
-
-    const {dispatch,devices, addDevice, editDevice} = useDeviceContext();
-
+    const id = searchParams.get('id');
+    const {dispatch, devices} = useDeviceContext();
     const device = devices.find((d) => d.id === id);
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -30,19 +27,19 @@ export default function DeviceForm({open}: { open: boolean }) {
         const name = formJson.name;
         const serialNumber = formJson.serialNumber;
         const data = formJson.data?.toString().split(',').map(Number) || [];
+
         if (device) {
-            dispatch({type: "EDIT_DEVICE", payload: {id, device: {id, name, serialNumber, data}}})
+            dispatch(editDevice(id, {id, name, serialNumber, data}));
         } else {
             const newDevice = {id: uuidv4(), name, serialNumber, data};
-            dispatch({type: "ADD_DEVICE", payload: newDevice})
-
-            // addDevice(newDevice);
+            dispatch(addDevice(newDevice));
         }
+
         handleClose();
     };
 
     const handleClose = () => {
-        setSearchParams("");
+        setSearchParams('');
     };
 
     return (
@@ -51,12 +48,10 @@ export default function DeviceForm({open}: { open: boolean }) {
             onClose={handleClose}
             PaperProps={{
                 component: 'form',
-                onSubmit: handleSubmit
+                onSubmit: handleSubmit,
             }}
         >
-            <DialogTitle>
-                {device ? 'Edit Device' : 'Create Device'}
-            </DialogTitle>
+            <DialogTitle>{device ? 'Edit Device' : 'Create Device'}</DialogTitle>
             <DialogContent>
                 <Container sx={{p: 1}}>
                     <Grid container spacing={2}>
@@ -92,7 +87,6 @@ export default function DeviceForm({open}: { open: boolean }) {
                             />
                         </Grid>
                     </Grid>
-
                 </Container>
             </DialogContent>
             <DialogActions>
@@ -102,5 +96,5 @@ export default function DeviceForm({open}: { open: boolean }) {
                 </Button>
             </DialogActions>
         </Dialog>
-    )
+    );
 }
