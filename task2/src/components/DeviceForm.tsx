@@ -114,7 +114,7 @@ export default function DeviceForm({ open }: { open: boolean }) {
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
-                <Button type="submit" variant="contained" disabled={validationError} color="primary">
+                <Button type="submit" variant="contained" disabled={Boolean(validationError)} color="primary">
                     {device ? 'Save' : 'Create'}
                 </Button>
             </DialogActions>
