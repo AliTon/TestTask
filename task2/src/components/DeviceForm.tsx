@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useDeviceContext } from '../state/context/DeviceContext';
 import {
@@ -27,6 +27,14 @@ export default function DeviceForm({ open }: { open: boolean }) {
     const id = searchParams.get('id');
     const { dispatch, devices } = useDeviceContext();
     const device = devices.find((d) => d.id === id);
+
+    const [validationError, setValidationError] = useState<string | null>(null);
+
+    const handleDataChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        const isValid = /^[0-9-]*$/.test(value);
+        setValidationError(isValid ? null : 'Only numbers and hyphens are allowed');
+    };
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -93,6 +101,12 @@ export default function DeviceForm({ open }: { open: boolean }) {
                                 required
                                 defaultValue={device?.data.join('-')}
                                 placeholder={'1234-5678-8765'}
+                                InputProps={{
+                                    onChange: handleDataChange,
+                                    pattern: '^[0-9-]*$',
+                                }}
+                                helperText={validationError}
+                                error={Boolean(validationError)}
                             />
                         </Grid>
                     </Grid>
@@ -100,7 +114,7 @@ export default function DeviceForm({ open }: { open: boolean }) {
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
-                <Button type="submit" variant="contained" color="primary">
+                <Button type="submit" variant="contained" disabled={validationError} color="primary">
                     {device ? 'Save' : 'Create'}
                 </Button>
             </DialogActions>
